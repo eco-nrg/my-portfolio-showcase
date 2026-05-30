@@ -1,0 +1,41 @@
+version: "3.8"
+services:
+  pi:
+    image: eco-parking-fake-pi
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./fake-pi/Dockerfile
+    ports:
+      - 8080:8080
+    environment:
+      REDIS_HOST: redis
+      DEVICE_KEY: a2afd4d159929841ac5f8d8f092fd4045f68e046
+      API_URL: https://api.eco-parking.7bits.it
+      APP_URL: https://eco-parking.7bits.it
+      SENTRY_DSN: https://cc1db637e98b479a9a8067d83604b597@logs.eco-nrg.store/2
+      SENTRY_ENV: fake
+    depends_on:
+      redis:
+        condition: service_healthy
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+  # caddy:
+  #   image: caddy:2.6-alpine
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./fake-pi/Caddyfile:/etc/caddy/Caddyfile
+  #     - ./.docker/caddy-config:/config  # configuration autosaves
+  #     - ./.docker/caddy-data:/data  # saving certificates
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #     - "443:443/udp"
+  #   environment:
+  #     WEB_APP_ADDRESS: api.eco-parking.7bits.it

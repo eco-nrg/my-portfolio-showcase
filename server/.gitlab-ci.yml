@@ -1,0 +1,27 @@
+image: python:3.9.15-slim-buster
+
+stages:
+  - lint
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+cache:
+  paths:
+    - .cache/pip
+    - .venv/
+
+before_script:
+  - python --version ; pip --version  # For debugging
+
+lint:
+  stage: lint
+  allow_failure: true
+  only:
+    - merge_requests
+    - main
+  script:
+    - pip install ruff
+    - ruff .
+
+# TODO: add gl-code-quality-report.json, but it has bugs in gitlab-ci

@@ -1,0 +1,150 @@
+version: "3.8"
+x-django-variables: &django-variables
+  DJANGO_DATABASE_HOST: db
+  DJANGO_DATABASE_PORT: 5432
+  DJANGO_SECRET_KEY: mD7A2lLWUJD2dELuL3PTlcKLQRuGTcWDsosf1eIr3Nx2iCgarl
+  POSTGRES_DB: econrstore_prod
+  POSTGRES_USER: econrstore_prod
+  POSTGRES_PASSWORD: w3tT0g7u3i6oEW
+  DJANGO_ENV: production
+  USE_HTTPS: true
+  ALLOWED_HOSTS: charge.eco-nrg.store,api.eco-nrg.store
+  SMS_TRANSPORT: real
+  SMS_API_KEY: EAEC967D-7B31-01B4-A1DA-47602B7B06D5
+  # CHANNEL_LAYERS_BACKEND: inmemory
+  CHANNEL_LAYERS_BACKEND: redis
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
+  INFLUXDB_V2_URL: http://stats.eco-nrg.store:8086
+  INFLUXDB_V2_ORG: eco-nrg
+  INFLUXDB_V2_TOKEN: l0EO9_kC5ou7muoBwFzdhjGWisQQDBgOJ6b89u4_nb13OrinqPF8GZAqgD-ZT0wu7GP9LnyKVf-GgfdVKXrvBg==
+  TZ: 'UTC'
+  SENTRY_DSN: https://78741653e32d4800b4993cc907243a59@logs.eco-nrg.store/1
+  SENTRY_ENV: production
+  HOST: https://api.eco-nrg.store/
+  INFLUXDB_MIDDLEWARE_DISABLED: false
+  INFLUXDB_MIDDLEWARE_BUCKET: api
+  PAYMENT_ENABLED: true
+  ALFA_BASE_URL: https://payment.alfabank.ru/payment/rest
+  ALFA_REGISTER_PAYMENT: /register.do
+  ALFA_GET_PAYMENT: /getOrderStatusExtended.do
+  ALFA_GET_SBP_LINK: /sbp/c2b/qr/dynamic/get.do
+  ALFA_API_USERNAME: r-charge_eco_nrg-api
+  ALFA_API_PASSWORD: BGuRe82u247e
+  ALFA_WEBHOOK_SECRET_KEY: 47cc2bdaspp5mb0rjv6ej4oaeo
+  ALFA_RETURN_URL: /profile/pay-success
+  ALFA_FAIL_URL: /profile/pay-fail
+  ALFA_LANGUAGE: ru
+  CURRENCY: 643
+  MINIMUM_PAYMENT: 1
+  MAXIMUM_PAYMENT: 500000
+  CARD_COMMISSION: 1.03
+  DEFAULT_FREE_HOURS: 10.0
+  FRONTEND_BASE_URL: https://charge.eco-nrg.store
+  STATION_ACTIVATION: /spaces?id=
+x-caddy-variables: &caddy-variables
+  WEB_APP_CORS: https://charge.eco-nrg.store
+  WEB_APP_ADDRESS: charge.eco-nrg.store
+  API_ADDRESS: api.eco-nrg.store
+  DOZZLE_ADDRESS: tail.eco-nrg.store
+x-logging: &default-logging
+  driver: local
+  options:
+    max-size: 100m
+services:
+  db:
+    image: "postgres:15-alpine"
+    restart: unless-stopped
+    volumes:
+      - ./.docker/pgdata:/var/lib/postgresql/data
+    ## in production we should not expose ports
+    # ports:
+    #   - 5432:5432
+    environment:
+      POSTGRES_DB: econrstore_prod
+      POSTGRES_USER: econrstore_prod
+      POSTGRES_PASSWORD: w3tT0g7u3i6oEW
+      TZ: 'UTC'
+      PGTZ: 'UTC'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d econrstore_prod -U econrstore_prod"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    logging: *default-logging
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    logging: *default-logging
+  api:
+    image: eco-parking-server
+    restart: unless-stopped
+    build:
+      context: ${SERVER_PATH:-/opt/eco-nrg/server}
+      dockerfile: ./docker/django/Dockerfile
+    ## proxied by caddy
+    # ports:
+    #   - 8000:8000
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ${SERVER_PATH:-/opt/eco-nrg/server}:/code
+    command: bash ./docker/django/server.sh
+    environment: *django-variables
+    logging: *default-logging     
+  webapp:
+    image: eco-parking-nuxt
+    restart: unless-stopped
+    build:
+      context: ${WEBAPP_PATH:-/opt/eco-nrg/web_app}
+      dockerfile: ./Dockerfile
+    ## proxied by caddy
+    # ports:
+    #   - 3000:3000
+    logging: *default-logging
+  caddy:
+    image: caddy:2.6-alpine
+    restart: unless-stopped
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ${SERVER_PATH:-/opt/eco-nrg/server}/static:/var/www/django/static
+      - ${SERVER_PATH:-/opt/eco-nrg/server}/media:/var/www/django/media
+      - ./.docker/caddy-config:/config  # configuration autosaves
+      - ./.docker/caddy-data:/data  # saving certificates
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment: *caddy-variables
+    logging: *default-logging
+  cron:
+    image: eco-parking-server
+    restart: unless-stopped
+    command: python /code/cron/cron_runner.py
+    volumes:
+      - ${SERVER_PATH:-/opt/eco-nrg/server}:/code
+    environment: *django-variables
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    logging: *default-logging
+  dozzle:
+    container_name: dozzle
+    restart: unless-stopped
+    image: amir20/dozzle:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      DOZZLE_USERNAME: logger
+      DOZZLE_PASSWORD: bepolite
+    logging: *default-logging

@@ -1,0 +1,18 @@
+[Unit]
+Description=Service -dev that sends extra stats on server
+# When systemd stops or restarts the app.service, the action is propagated to this unit
+PartOf=app-dev.service
+# Start this unit after the app.service start
+After=app-dev.service
+
+[Service]
+Type=simple
+WorkingDirectory=/home/raspi/python/station_dev/station
+ExecStart=/home/raspi/python/station_dev/station/venv/bin/python py_scripts/extra_stats_loop.py
+
+EnvironmentFile=/home/raspi/python/station_dev/station/.env
+
+Restart=on-failure
+
+[Install]
+WantedBy=app-dev.service

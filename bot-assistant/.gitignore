@@ -1,0 +1,11 @@
+/testing/
+/.idea/
+/.env
+
+/.idea/eco_nrg__BotAssistant.iml
+/.idea/inspectionProfiles/
+/.idea/modules.xml
+/.idea/vcs.xml
+/.idea/misc.xml
+/.idea/sqlDataSources.xml
+/.idea/webResources.xml

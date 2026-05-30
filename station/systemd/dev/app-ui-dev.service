@@ -1,0 +1,19 @@
+[Unit]
+#PartOf=app-dev.service
+Description=Eco Praking UI
+#After=app-dev.service lxsession.target
+After=graphical.target
+
+[Service]
+WorkingDirectory=/home/raspi/python/station_dev/station
+ExecStart=python pyqt/main.py
+User=raspi
+Environment="DISPLAY=:0"
+Restart=on-failure
+
+EnvironmentFile=/home/raspi/python/station_dev/station/.env
+
+[Install]
+#WantedBy=default.target
+#WantedBy=app-dev.service
+WantedBy=graphical.target

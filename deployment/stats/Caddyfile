@@ -1,0 +1,29 @@
+# See https://caddyserver.com/docs
+
+# Email for Let's Encrypt expiration notices
+{
+	email proj-eco-parking@7bits.it
+	auto_https disable_redirects
+}
+
+https://{$DOMAIN_NAME} {
+	# Removing some headers for improved security:
+	header -Server
+
+	handle {
+		reverse_proxy grafana:3000
+	}
+
+	encode gzip
+}
+
+http://{$DOMAIN_NAME}:8086 {
+	# Removing some headers for improved security:
+	header -Server
+
+	handle {
+		reverse_proxy influxdb:8086
+	}
+
+	encode gzip
+}

@@ -1,0 +1,18 @@
+[Unit]
+Description=Lidar distance measuring
+# When systemd stops or restarts the app.service, the action is propagated to this unit
+PartOf=app.service
+# Start this unit after the app.service start
+After=app.service
+
+[Service]
+Type=simple
+WorkingDirectory=/home/raspi/python/station
+ExecStart=/home/raspi/python/station/venv/bin/python py_scripts/tfmini_plus_loop.py
+
+EnvironmentFile=/home/raspi/python/station/.env
+
+Restart=on-failure
+
+[Install]
+WantedBy=app.service

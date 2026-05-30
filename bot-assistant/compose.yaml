@@ -1,0 +1,169 @@
+# Comments are provided throughout this file to help you get started.
+# If you need more help, visit the Docker Compose reference guide at
+# https://docs.docker.com/go/compose-spec-reference/
+
+# Here the instructions define your application as a service called "server".
+# This service is built from the Dockerfile in the current directory.
+# You can add other services your application may depend on here, such as a
+# database or a cache. For examples, see the Awesome Compose repository:
+# https://github.com/docker/awesome-compose
+x-bot-variables: &bot-variables
+  TELEGRAM_BOT_TOKEN_KEY: 7929302793:AAGejKMyTp7cXyDipb4XTjJ8isfUi-4ELUM
+  REPORT_PROBLEM_URL: https://wa.me/79882463355
+  API_TOKEN: e3724018f4214b85fe3a4e336bafc5c8f93136b4
+  # http://192.168.101.16:8000 or http://localhost:8000 - if local
+  # http://10.8.0.154:8000 - if via vpn server or http://10.8.0.162:8000 - if local via vpn
+  # https://charge.eco-nrg.store - if compose on prod server
+  API_SERVER_URL: http://10.8.0.154:8000
+  API_BASE_PATH: /main/api
+  API_VERSION: /v1
+  API_SPACES_PATH: /space
+  API_ALL_SPACES_PATH: /all
+
+  BOT_TEXTS_START_MESSAGE: 'Здравствуйте! Выберите интересующую Вас зарядную станцию.'
+  BOT_TEXTS_CHOOSE_CONNECTOR_MESSAGE: 'Выберите тип разъема.'
+  BOT_TEXTS_CHOOSE_QUESTION_MESSAGE: 'Выберите из списка интересующий Вас вопрос:'
+  BOT_TEXTS_UNEXPECTED_ERROR: 'Просим Вашего прощения, возникла непредвиденная ошибка.'
+
+  SQLITE_PATH_TO_DB: /app/orm/sqlite_deprecated/econrg_store.db
+  SQLITE_USERS_TABLE: users
+  SQLITE_SESSIONS_TABLE: sessions
+  POSTGRES_DB_URL: postgresql://localhost:5432/econrg_store
+  # econrg-db - if on server
+  # 192.168.101.16 - if local
+  # 10.8.0.154 - if via vpn server
+  # 84.38.181.131 - if compose on prod server
+  POSTGRES_DB_HOST: econrg-db
+  POSTGRES_DB_NAME: econrg_store
+  POSTGRES_DB_USER: econrg_admin
+  POSTGRES_DB_PASSWORD: a123456b
+services:
+  bot:
+    container_name: assistant-bot
+    build:
+      context: .
+    volumes:
+      - /orm/postgreSQL/migrations:/app/orm/postgreSQL/migrations
+    environment: *bot-variables
+    ports:
+      - 8888:8080
+    links:
+      - econrg-db:econrg-db
+  econrg-db:
+    image: "postgres:15-alpine"
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=50"
+      - "-c"
+      - "shared_buffers=1GB"
+      - "-c"
+      - "effective_cache_size=4GB"
+      - "-c"
+      - "work_mem=16MB"
+      - "-c"
+      - "maintenance_work_mem=512MB"
+      - "-c"
+      - "random_page_cost=1.1"
+      - "-c"
+      - "temp_file_limit=10GB"
+      - "-c"
+      - "log_min_duration_statement=200ms"
+      - "-c"
+      - "idle_in_transaction_session_timeout=10s"
+      - "-c"
+      - "lock_timeout=1s"
+      - "-c"
+      - "statement_timeout=60s"
+      - "-c"
+      - "shared_preload_libraries=pg_stat_statements"
+      - "-c"
+      - "pg_stat_statements.max=10000"
+      - "-c"
+      - "pg_stat_statements.track=all"
+    restart: unless-stopped
+    volumes:
+      - ./create_database.sql:/docker-entrypoint-initdb.d/create_database.sql
+      - /db-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: econrg_store
+      POSTGRES_USER: econrg_admin
+      POSTGRES_PASSWORD: a123456b
+      LANG: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d econrg_store -U econrg_admin"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 4G
+#    networks:
+#      - econrg-db
+
+#  pgadmin:
+#    container_name: econrg-pgadmin
+#    image: dpage/pgadmin4:7.2
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: "info@lex-energo.ru"
+#      PGADMIN_DEFAULT_PASSWORD: "pgadmin4pwd"
+#      PGADMIN_CONFIG_SERVER_MODE: "False"
+#    volumes:
+#      - pgadmin-data:/var/lib/pgadmin
+#    ports:
+#      - "5050:80"
+#    restart: unless-stopped
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '0.5'
+#          memory: 1G
+#    networks:
+#      - econrg-db
+#
+#volumes:
+#  db-data:
+#  pgadmin-data:
+#
+#networks:
+#  econrg-db:
+#    driver: bridge
+
+# The commented out section below is an example of how to define a PostgreSQL
+# database that your application can use. `depends_on` tells Docker Compose to
+# start the database before your application. The `db-data` volume persists the
+# database data between container restarts. The `db-password` secret is used
+# to set the database password. You must create `db/password.txt` and add
+# a password of your choosing to it before running `docker compose up`.
+#     depends_on:
+#       db:
+#         condition: service_healthy
+#   db:
+#     image: postgres
+#     restart: always
+#     user: postgres
+#     secrets:
+#       - db-password
+#     volumes:
+#       - db-data:/var/lib/postgresql/data
+#     environment:
+#       - POSTGRES_DB=example
+#       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+#     expose:
+#       - 5432
+#     healthcheck:
+#       test: [ "CMD", "pg_isready" ]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5
+# volumes:
+#   db-data:
+# secrets:
+#   db-password:
+#     file: db/password.txt
+

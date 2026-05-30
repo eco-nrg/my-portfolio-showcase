@@ -1,0 +1,84 @@
+version: "3.8"
+x-environment:
+  &default-environment
+  DATABASE_URL: postgres://postgres:postgres@postgres:5432/postgres
+  SECRET_KEY: 0e7ec173a307cd7e5410267b07c4f4302676541215e04d7c5c9f1abca6bbbac6 # best to run openssl rand -hex 32
+  PORT: 8000
+  EMAIL_URL: consolemail:// # Example smtp://email:password@smtp_url:port https://glitchtip.com/documentation/install#configuration
+  GLITCHTIP_DOMAIN: https://logs.eco-nrg.store/ # Change this to your domain
+  DEFAULT_FROM_EMAIL: logs@eco-nrg.store # Change this to your email
+  CELERY_WORKER_AUTOSCALE: "1,3"  # Scale between 1 and 3 to prevent excessive memory usage. Change it or remove to set it to the number of cpu cores.
+  CELERY_WORKER_MAX_TASKS_PER_CHILD: "10000"
+  ENABLE_USER_REGISTRATION: false
+
+x-depends_on:
+  &default-depends_on
+  - postgres
+  - redis
+
+x-logging:
+  &default-logging
+  driver: local
+  options:
+    max-size: 100m
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "trust"  # Consider removing this and setting a password
+    restart: unless-stopped
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    logging: *default-logging
+  redis:
+    image: redis
+    restart: unless-stopped
+    logging: *default-logging
+  web:
+    image: glitchtip/glitchtip
+    depends_on: *default-depends_on
+    ports:
+      - "8000:8000"
+    environment: *default-environment
+    restart: unless-stopped
+    volumes:
+      - uploads:/code/uploads
+    logging: *default-logging
+  worker:
+    image: glitchtip/glitchtip
+    command: ./bin/run-celery-with-beat.sh
+    depends_on: *default-depends_on
+    environment: *default-environment
+    restart: unless-stopped
+    volumes:
+      - uploads:/code/uploads
+    logging: *default-logging
+  migrate:
+    image: glitchtip/glitchtip
+    depends_on: *default-depends_on
+    command: "./manage.py migrate"
+    environment: *default-environment
+    logging: *default-logging
+  caddy:
+    image: caddy:2.6-alpine
+    restart: unless-stopped
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/config  # configuration autosaves
+      - caddy_config:/data  # saving certificates
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMAIN_NAME: logs.eco-nrg.store
+    logging: *default-logging
+
+
+volumes:
+  pg-data:
+  uploads:
+  caddy_config:
+  caddy_data:
+

@@ -1,0 +1,140 @@
+# See https://caddyserver.com/docs
+
+# TODO: разобраться как написать корректный матчер для cors
+# условие - что есть header Origin из разрешенного списка
+# и отдавать надо конкретному Origin конкретные Access-Control-Allow-Origin
+(cors) {
+	@cors_preflight {
+		method OPTIONS
+		header Origin {args.0}
+	}
+	@cors header Origin {args.0}
+
+	handle @cors_preflight {
+		header Access-Control-Allow-Origin "{args.0}"
+		header Access-Control-Allow-Credentials "true"
+		header Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE"
+		header Access-Control-Allow-Headers "Authorization,Content-Type"
+		header Access-Control-Max-Age "3600"
+		header Vary Origin
+		header Vary Referer
+		header Vary x-origin
+		respond "" 204
+	}
+
+	handle @cors {
+		header Access-Control-Allow-Origin "{args.0}"
+		header Access-Control-Expose-Headers "Link"
+		header Vary Origin
+		header Vary Referer
+		header Vary x-origin
+	}
+}
+
+(cors2) {
+	@cors_preflight_2 {
+		method OPTIONS
+		header Origin {args.0}
+	}
+	@cors_2 header Origin {args.0}
+
+	handle @cors_preflight_2 {
+		header Access-Control-Allow-Origin "{args.0}"
+		header Access-Control-Allow-Credentials "true"
+		header Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE"
+		header Access-Control-Allow-Headers "Authorization,Content-Type"
+		header Access-Control-Max-Age "3600"
+		header Vary Origin
+		header Vary Referer
+		header Vary x-origin
+		respond "" 204
+	}
+
+	handle @cors_2 {
+		header Access-Control-Allow-Origin "{args.0}"
+		header Access-Control-Expose-Headers "Link"
+		header Vary Origin
+		header Vary Referer
+		header Vary x-origin
+	}
+}
+
+# Email for Let's Encrypt expiration notices
+{
+	email proj-eco-parking@7bits.it
+}
+
+{$WEB_APP_ADDRESS} {
+	handle /sw.js {
+		respond "" 404
+	}
+
+	handle {
+		header /no-cache* >Cache-Control nocache
+		reverse_proxy {
+			to webapp:3000
+			header_up Host {upstream_hostport}
+			header_up X-Forwarded-For {host}
+		}
+	}
+
+	encode gzip
+
+	log {
+		output stdout
+	}
+}
+
+{$API_ADDRESS} {
+	# HTTPS options:
+	header Strict-Transport-Security max-age=31536000;
+
+	# Removing some headers for improved security:
+	header -Server
+
+	handle_path /static/* {
+		root * /var/www/django/static
+		file_server
+	}
+
+	handle_path /media/* {
+		root * /var/www/django/media
+		file_server
+	}
+
+	handle {
+		import cors {$WEB_APP_CORS}
+		import cors2 {$DEBUG_CORS}
+		reverse_proxy api:8000
+	}
+
+	encode gzip
+
+	log {
+		output stdout
+	}
+}
+
+{$DOZZLE_ADDRESS} {
+	handle {
+		reverse_proxy dozzle:8080
+	}
+
+	encode gzip
+
+	log {
+		output stdout
+	}
+}
+
+{$FAKE_PI_ADDRESS} {
+	handle {
+		reverse_proxy pi:8080
+	}
+
+	encode gzip
+
+	log {
+		output stdout
+	}
+}

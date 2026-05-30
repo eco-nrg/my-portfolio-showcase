@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Report</title>
+  <style>
+    .styled-table {
+      border-collapse: collapse;
+      margin: 25px 0;
+      font-size: 0.9em;
+      font-family: sans-serif;
+      min-width: 400px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .styled-table thead tr {
+      background-color: #009879;
+      color: #ffffff;
+      text-align: left;
+    }
+
+    .styled-table th,
+    .styled-table td {
+      padding: 12px 15px;
+    }
+
+    .styled-table tbody tr {
+      border-bottom: 1px solid #dddddd;
+    }
+
+    .styled-table tbody tr:nth-of-type(even) {
+      background-color: #f3f3f3;
+    }
+
+    .styled-table tbody tr:last-of-type {
+      border-bottom: 2px solid #009879;
+    }
+
+    .styled-table tbody tr.active-row {
+      font-weight: bold;
+      color: #009879;
+    }
+  </style>
+</head>
+
+<body>
+  {% block content %}
+  <table class="styled-table">
+    <tr>
+      <th>user</th>
+      <th>delta_kw</th>
+      <th>duration</th>
+      <th>start_kw</th>
+      <th>end_kw</th>
+      <th>finished_at</th>
+      <th>connector</th>
+      <th>space</th>
+      <th>status</th>
+      <th>booking_duration</th>
+    </tr>
+    {% for order in orders %}
+    <tr>
+      <td data-label="user">{{ order.user.username }}</td>
+      <td data-label="delta_kw">{{ order.delta_kw }}</td>
+      <td data-label="duration">{{ order.duration_dt }}</td>
+      <td data-label="start_kw">{{ order.start_kw }}</td>
+      <td data-label="end_kw">{{ order.end_kw }}</td>
+      <td data-label="finished_at">{{ order.finished_at | date:"Y-m-d H:i:s" }}</td>
+      <td data-label="connector">{{ order.connector_type.connector_type }}</td>
+      <td data-label="space">{{ order.space.name }} {{ order.space.uid }}</td>
+      <td data-label="status">{{ order.status }}</td>
+      {% if order.booking %}
+      <td data-label="booking_duration">{{ order.booking.actual_duration }}</td>
+      {% else %}
+      <td data-label="booking_duration"></td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+  </table>
+  {% endblock %}
+</body>
+
+</html>

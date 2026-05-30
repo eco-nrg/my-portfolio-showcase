@@ -1,0 +1,494 @@
+:root {
+  --color-black: rgb(0, 18, 35);
+  --color-white: rgb(255, 255, 255);
+  --color-white-two: rgb(212, 212, 212);
+  --color-dark-blue: rgb(0, 27, 62);
+  --color-blue: rgb(57, 73, 160);
+  --color-red: rgb(231, 70, 16);
+}
+body {
+  margin: 0;
+  background-color: var(--color-black);
+}
+
+h1 {
+  color: var(--color-white);
+  font-family: "Fira Sans", sans-serif;
+}
+
+h2 {
+  color: var(--color-red);
+  font-size: x-large;
+  font-family: "Fira Sans", sans-serif;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.h3 {
+  font-size: 1rem;
+  color: var(--color-white);
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 300;
+  margin-bottom: 1rem;
+}
+
+svg {
+  width: auto;
+  height: 1.8rem;
+}
+
+.svg-1 {
+  margin: 0.5rem 0;
+}
+
+.row {
+  margin-right: 0;
+  margin-left: 0;
+}
+
+.screen {
+  height: 1000px;
+}
+
+.icon-position {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Navigation bar section  */
+
+.container-fluid {
+  padding: 10px 10%;
+}
+
+.hyperlink {
+  color: var(--color-white-two);
+  fill: var(--color-white-two);
+  text-decoration: none;
+  font-size: medium;
+  font-weight: 600;
+  padding: 0 30px;
+  white-space: nowrap;
+}
+
+.hyperlink:hover {
+  color: var(--color-white);
+          
+}
+
+.icon {
+  fill: var(--color-white-two);
+  width: 37px;
+}
+.list-phone {
+  width: fit-content;
+  float: right;
+  line-height: 1.4em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100%;
+  padding: 0;
+}
+.icon:hover {
+  fill: var(--color-white);
+}
+
+.logo-mini {
+  height: 2.2rem;
+}
+
+.navbar {
+  padding: 0;
+}
+.navbar-nav{
+  height: 100%;
+  white-space: nowrap;
+}
+
+.navicon {
+  margin: 1px;
+}
+
+.links-plus {
+  text-align: center;
+  color: var(--color-white);
+  margin: auto;
+  font-size: 0.85rem;
+  font-weight: 550;
+}
+
+.phonenumber {
+  font-size: 1rem;
+  font-weight: 600;
+  height: 100%;
+}
+
+.svg-div {
+  display: flex;
+  align-items: center;
+}
+
+.small-show {
+  display: none;
+}
+
+/* svg{
+  fill: var(--color-white);
+}
+svg:hover{
+  fill: var(--color-white);
+} */
+
+#nav-numbers {
+  text-align: right;
+  justify-content: end;
+}
+
+#title {
+  font-family: "Fira Sans", sans-serif;
+  background-color: var(--color-blue);
+  position: -webkit-sticky;
+  /* Safari */
+  position: sticky;
+  top: 0;
+  z-index: 1
+}
+
+#plus {
+  display: inline;
+  height: 1rem;
+}
+
+/* First panel - logo and short-text */
+
+.first-text {
+  font-size: 3.5rem;
+  padding-left: 5%;
+  margin: 0;
+  max-width: 630px;
+}
+
+#logo-big {
+  display: block;
+  margin: auto;
+  height: 100%;
+}
+
+#home {
+  margin: 0;
+  padding: 10% 0;
+}
+
+/* Complectation */
+
+.block-h2 {
+  font-size: medium;
+}
+
+.each-block {
+  background-color: var(--color-dark-blue);
+  border-left: 3px solid var(--color-red);
+  border-right: 20px solid var(--color-black);
+  padding: 2% 3% 4% 2%;
+}
+
+.second-text {
+  padding-top: 1%;
+  padding-right: 10%;
+  margin-left: 2%;
+}
+
+#complectation {
+  margin: 0;
+  padding-top: 6%;
+  padding-bottom: 3%;
+}
+
+#first-station {
+  display: block;
+  margin: auto;
+  width: 350px;
+}
+
+
+/* Concept */
+#concept {
+  overflow: hidden;
+  margin-top: 7%;
+}
+
+#third-text {
+  position: relative;
+  left: 5%;
+  top: 5%;
+  padding: 5% 2% 0 5%;
+}
+
+#parklock {
+  padding-top: 3%;
+  object-fit: cover;
+}
+
+#parking-pic {
+  position: relative;
+  left: 250px;
+  float: right;
+  width: 1200px;
+  z-index: -1;
+}
+
+#onpic-block {
+  border-right: 0;
+}
+
+/* UI */
+
+#service {
+  margin-top: 7%;
+  padding-top: 7%;
+}
+
+#hand {
+  position: relative;
+  right: 150px;
+  width: 133%;
+}
+
+#phone {
+  display: none;
+}
+
+/* footer */
+.box-phone {
+  flex-flow: column wrap;
+  text-align: right;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+.white-text {
+  color: var(--color-white);
+}
+
+#copyright-2 {
+  display: none;
+}
+
+#copyright-3 {
+  display: none;
+}
+
+#footer {
+  background-color: var(--color-blue);
+}
+
+.box-social{
+  justify-content: flex-end;
+}
+
+
+/* For mobile */
+
+/* @media (max-width: 1196px) {
+  #parking-pic {
+    margin-top: 15%;
+    height: auto;
+    left: 70%;
+    max-width: 200%;
+  }
+} */
+
+
+
+@media (max-width: 1161px) {
+  .h3 {
+    font-size: small;
+  }
+
+  #third-text {
+    top: 7%;
+  }
+}
+
+@media (max-width: 1120px) {
+  #hand {
+    width: 150%;
+  }
+
+  .first-text {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 991px) {
+  #nav-numbers {
+    text-align: center;
+    margin-bottom: 3%;
+    font-size: 1rem !important;
+  }
+
+  .screen {
+    height: auto;
+  }
+
+  /* Navbar */
+
+  .dropdown {
+    margin-top: 3%;
+    text-align: center;
+  }
+
+  #title {
+    text-align: center;
+  }
+
+  /* First block */
+
+  .first-text {
+    font-size: 1.7rem;
+    padding-top: 35px;
+    padding-left: 0;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  #home {
+    margin: auto;
+    text-align: center;
+  }
+
+  .midsize-col {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  #first-station {
+    padding: 0;
+    margin: auto;
+    display: block;
+    width: 350px;
+  }
+
+  /* second block */
+
+  .second-text {
+    padding: 3% 10%;
+  }
+
+  /* third block */
+
+  #third-text {
+    top: 0;
+    left: 0;
+    padding: 3% 10%;
+    right: 0;
+  }
+
+  #parking-pic {
+    left: 10px;
+    margin-top: 0;
+    height: auto;
+    max-width: 100%;
+  }
+
+  #onpic-block {
+    border-right: 20px solid var(--color-black);
+  }
+
+  /* UI */
+  #ui {
+    margin-top: 5%;
+  }
+
+  #hand {
+    display: none;
+    position: relative;
+    left: 10%;
+    width: 80%;
+  }
+
+  #phone {
+    display: block;
+    margin: auto;
+    position: relative;
+    width: 40%;
+  }
+
+  #footer {
+    margin-top: 3%;
+  }
+}
+
+@media (max-width: 767px) {
+
+  .container-fluid {
+    padding: 2vw 10%;
+  }
+
+  .links-plus {
+    margin-top: 3% !important;
+    margin: 0;
+    text-align: center;
+  }
+
+  .small-hide {
+    display: none;
+  }
+
+  .small-show {
+    display: inline;
+  }
+
+
+  .logo-align {
+    text-align: left;
+  }
+
+  #phone {
+    width: 50%;
+  }
+
+  #copyright-1 {
+    display: none;
+  }
+
+  #copyright-2 {
+    display: inline;
+  }
+}
+
+@media (max-width: 535px) {
+
+  #first-station {
+    width: 100%;
+  }
+
+  #parking-pic {
+    left: 30px;
+    max-width: 120%;
+  }
+
+  #phone {
+    width: 75%;
+  }
+
+  .phonenumber {
+    font-size: 4vw;
+    white-space: nowrap;
+  }
+
+  #nav-numbers .phonenumber {
+    font-size: 1.1rem;
+  }
+
+  #copyright-2 {
+    display: none;
+  }
+
+  #copyright-3 {
+    display: inline;
+  }
+}

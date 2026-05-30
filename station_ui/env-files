@@ -1,0 +1,3 @@
+BASE_URL="http://eco-station.tk"
+BASE_PORT="8000"
+BASE_ADDR="get_status"

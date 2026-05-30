@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Lobby</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+</head>
+<body>
+    <form id="auth_form">
+        <input type="text" name="login" placeholder="Login"/>
+        <input type="password" name="pass" placeholder="Password"/>
+        <input type="submit" value="Sign in"/>
+    </form>
+    
+    <form id="phone_check_form">
+        <input type="text" name="phone" placeholder="79998887766"/>
+        <input type="submit" value="Check"/>
+    </form>
+
+    <form id="phone_auth_form">
+        <input type="text" name="phone" placeholder="79998887766"/>
+        <input type="text" name="code" placeholder="code"/>
+        <input type="submit" value="Check"/>
+    </form>
+
+    <hr>
+
+    <h1>Lets chat!</h1>
+
+    <form id="chat_form">
+        <input type="text" name="message", placeholder="Type message here"/>
+        <input type="submit" value="Send"/>
+    </form>
+
+    <div id="chatbox"></div>
+    
+    <div id="userlistbox"></div>
+
+    <script type="text/javascript">
+	let wsProtocol;
+	if (window.location.protocol == 'https:') {
+		wsProtocol = 'wss://'
+	} else {
+		wsProtocol = 'ws://'
+	}
+
+        let url = wsProtocol + window.location.host + '/ws/socket-server/'
+        var ws = null
+
+        function connect() {
+            ws = new WebSocket(url)
+            ws.onopen = function() {
+                ws.send(JSON.stringify({
+                    'type': 'init',
+                    'data': {
+                        'token': localStorage.getItem("token"),
+                    }
+                }))
+                console.log('connected')
+            }
+
+            ws.onmessage = function(e) {
+                let text = "";
+                const chatbox = document.getElementById("chatbox");
+                const msg = JSON.parse(e.data)
+                const timeStr = new Date().toLocaleTimeString()
+                console.log('Data:', msg)
+
+                switch (msg.type) {
+                    case "auth_response":
+                        if (msg.data.success) {
+                            localStorage.setItem("token", msg.data.token)
+                        } else {
+                            localStorage.removeItem("token")
+                        }
+                        break
+                    case "username":
+                        text = `User <em>${msg.data.name}</em> signed in at ${timeStr}<br>`
+                        break
+                    case "message":
+                        text = `(${timeStr}) ${msg.data.name} : ${msg.data.text} <br>`
+                        break
+                    case "userlist":
+                        document.getElementById("userlistbox").innerHTML = msg.users.join("<br>")
+                        break
+                }
+                if (text.length) {
+                    chatbox.innerHTML += text
+                }
+            }
+
+            ws.onclose = function(e) {
+                console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason)
+                setTimeout(function() {
+                    connect()
+                }, 1000)
+            }
+
+            ws.onerror = function(err) {
+                console.error('Socket encountered error: ', err.message, 'Closing socket')
+                ws.close()
+            }
+        }
+
+        connect()
+
+        let chat_form = document.getElementById('chat_form')
+        chat_form.addEventListener('submit', (e)=> {
+            e.preventDefault()
+            let message = e.target.message.value
+            ws.send(JSON.stringify({
+                'type': 'chat_message',
+                'data': {
+                    'text': message
+                }
+            }))
+            chat_form.reset()
+        })
+
+        let auth_form = document.getElementById('auth_form')
+        auth_form.addEventListener('submit', (e)=> {
+            e.preventDefault()
+            ws.send(JSON.stringify({
+                'type': 'auth',
+                'data': {
+                    'login': e.target.login.value,
+                    'pass': e.target.pass.value,
+                }
+            }))
+        })
+
+        let phone_check_form = document.getElementById('phone_check_form')
+        phone_check_form.addEventListener('submit', (e)=> {
+            e.preventDefault()
+            ws.send(JSON.stringify({
+                'type': 'phone_check',
+                'data': {
+                    'phone': e.target.phone.value,
+                }
+            }))
+        })
+
+        let phone_auth_form = document.getElementById('phone_auth_form')
+        phone_auth_form.addEventListener('submit', (e)=> {
+            e.preventDefault()
+            ws.send(JSON.stringify({
+                'type': 'phone_auth',
+                'data': {
+                    'phone': e.target.phone.value,
+                    'code': e.target.code.value,
+                }
+            }))
+        })
+
+    </script>
+</body>
+</html>

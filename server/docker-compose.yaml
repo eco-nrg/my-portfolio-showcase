@@ -1,0 +1,96 @@
+version: "3.8"
+x-django-variables: &django-variables
+  DJANGO_DATABASE_HOST: db
+  DJANGO_DATABASE_PORT: 5432
+  DJANGO_SECRET_KEY: mD7A2lLWUJD2dELuL3PTlcKLQRuGTcWDsosf1eIr3Nx2iCgarl
+  POSTGRES_DB: econrstore_prod
+  POSTGRES_USER: econrstore_prod
+  POSTGRES_PASSWORD: w3tT0g7u3i6oEW
+  DJANGO_ENV: debug
+  SMS_TRANSPORT: stub
+  USE_HTTPS: false
+  HOST: http://localhost:8000
+  CHANNEL_LAYERS_BACKEND: redis
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
+  INFLUXDB_V2_URL: http://influx:8086
+  INFLUXDB_V2_ORG: eco-nrg
+  INFLUXDB_V2_TOKEN: k1Q33_kC5ou7muoBwFzahjKWisQQDBgOJ6b89u4_nb13OrinqPF8GZAqgD-ZT0wu7GP9LnyKVf-GgfdVKXrvPo==
+  SENTRY_DSN: https://50e3121c47c84d938f0477545907e3a1@logs.eco-nrg.store/4
+  SENTRY_ENV: local
+services:
+  db:
+    image: "postgres:15-alpine"
+    restart: unless-stopped
+    volumes:
+      - ./.docker/pgdata:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: econrstore_prod
+      POSTGRES_USER: econrstore_prod
+      POSTGRES_PASSWORD: w3tT0g7u3i6oEW
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d econrstore_prod -U econrstore_prod"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  influxdb:
+    image: influxdb:2.7-alpine
+    ports:
+      - 8086:8086
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: qweqweasd
+      DOCKER_INFLUXDB_INIT_ORG: eco-nrg
+      DOCKER_INFLUXDB_INIT_BUCKET: rasp-pi
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: k1Q33_kC5ou7muoBwFzahjKWisQQDBgOJ6b89u4_nb13OrinqPF8GZAqgD-ZT0wu7GP9LnyKVf-GgfdVKXrvPo==
+    volumes:
+      - ./.docker/influxdb:/var/lib/influxdb
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+  web:
+    image: eco-parking-server
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./docker/django/Dockerfile
+      args:
+        DJANGO_ENV: debug
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - .:/code
+    environment: *django-variables
+    command: bash ./docker/django/server.sh
+    ports:
+      - 8000:8000
+  cron:
+    image: eco-parking-server
+    restart: unless-stopped
+    command: python /code/cron/cron_runner.py
+    volumes:
+      - .:/code
+    environment: *django-variables
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: 500m

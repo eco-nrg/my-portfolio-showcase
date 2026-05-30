@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="100%" height="100%" style="shape-rendering: geometricprecision;" viewBox="0 0 1715 2992" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <linearGradient id="gradient-0" gradientUnits="userSpaceOnUse" x1="858.36" y1="-10306.001" x2="858.36" y2="2992.002" bx:pinned="true" xlink:href="#gradient-0">
+      <stop offset="0" style="stop-color: rgb(0, 17, 71);"/>
+      <stop offset="0.093" style="stop-color: rgb(0, 144, 247);"/>
+      <stop offset="0.19" style="stop-color: rgb(0, 0, 0);"/>
+      <stop offset="0.29" style="stop-color: rgb(0, 144, 247);"/>
+      <stop offset="0.385" style="stop-color: rgb(0, 0, 0);"/>
+      <stop offset="0.479" style="stop-color: rgb(0, 144, 247);"/>
+      <stop offset="0.578" style="stop-color: rgb(0, 17, 71);"/>
+      <stop offset="0.678" style="stop-color: rgb(0, 144, 247);"/>
+      <stop offset="0.772" style="stop-color: rgb(0, 17, 71);"/>
+      <stop offset="0.867" style="stop-color: rgb(0, 144, 247);"/>
+      <stop offset="0.966" style="stop-color: rgb(0, 17, 71);"/>
+      <stop offset="1" style="stop-color: rgb(0, 144, 247);"/>
+    </linearGradient>
+    <linearGradient id="id0" gradientUnits="userSpaceOnUse" x1="-0" y1="0" x2="0" y2="12014.96">
+      <stop offset="0" style="stop-opacity:1; stop-color:#018FFB"/>
+      <stop offset="0.0784" style="stop-opacity:1; stop-color:#001147"/>
+      <stop offset="0.149" style="stop-opacity:1; stop-color:#018FFB"/>
+      <stop offset="0.2314" style="stop-opacity:1; stop-color:#001147"/>
+      <stop offset="0.302" style="stop-opacity:1; stop-color:#018FFB"/>
+      <stop offset="0.3804" style="stop-opacity:1; stop-color:#001147"/>
+      <stop offset="0.4588" style="stop-opacity:1; stop-color:#018FFB"/>
+      <stop offset="0.5294" style="stop-opacity:1; stop-color:#001147"/>
+      <stop offset="0.6118" style="stop-opacity:1; stop-color:#018FFB"/>
+      <stop offset="0.6902" style="stop-opacity:1; stop-color:#001147"/>
+      <stop offset="0.7608" style="stop-opacity:1; stop-color:#018FFB"/>
+      <stop offset="0.8392" style="stop-opacity:1; stop-color:#001147"/>
+      <stop offset="0.9216" style="stop-opacity:1; stop-color:#018FFB"/>
+      <stop offset="1" style="stop-opacity:1; stop-color:#001147"/>
+    </linearGradient>
+  </defs>
+  <g id="Слой_x0020_1" transform="matrix(0.676861, 0, 0, 0.528365, 6.276075, -3398.774902)" style="">
+    <rect class="fil0" x="-0" width="2506.4" height="12014.96" style="fill: url(#id0);">
+      <animateTransform 
+        attributeName="transform"
+        type="translate"
+        from="0 0"
+        to="0 5500"
+        begin="0s"
+        dur="4s"
+        repeatCount="indefinite"
+      />
+    </rect>
+  </g>
+  <path d="M 0 0 L 1715 0 L 1715 2992 L 0 2992 L 0 0 Z M 678.977 40.462 C 625.538 151.469 571.659 250.968 514.602 362.916 C 459.404 471.205 405.825 576.14 349.848 684.791 C 322.958 736.988 295.129 793.296 267.911 847.876 C 236.145 911.56 27.394 1310.247 26.005 1329.61 L 680.275 1330.149 C 673.391 1347.738 641.415 1413.198 629.745 1428.315 L 454.418 1769.221 C 426 1828.118 395.643 1884.061 368.284 1939.407 C 350.797 1974.782 287.465 2088.112 281.34 2110.558 L 738.071 2111.714 C 728.169 2144.068 711.502 2170.895 699.081 2202.317 C 667.636 2281.854 615.365 2386.925 581.251 2469.258 C 543.89 2559.408 498.184 2651.237 461.403 2738.228 C 447.803 2770.395 435.053 2797.657 423.122 2826.408 C 411.281 2854.474 402.547 2873.691 390.018 2900.422 C 384.841 2911.477 380.514 2922.887 374.908 2935.932 C 370.353 2946.528 364.666 2965.548 358.252 2968.207 L 359.581 2978.703 C 366.395 2973.876 359.641 2975.976 368.653 2975.898 C 378.725 2959.485 425.83 2918.55 442.857 2911.85 C 447.483 2902.423 522.946 2840.269 539.463 2826.359 L 615.425 2761.841 C 632.372 2747.45 629.295 2744.104 640.256 2744.006 C 660.56 2716.235 818.96 2591.113 867.003 2548.892 L 1206.104 2259.507 C 1242.816 2227.823 1283.805 2193.979 1318.569 2165.226 C 1331.098 2154.868 1527.079 1984.082 1544.535 1975.871 C 1549.442 1964.079 1545.845 1970.505 1553.249 1968.612 C 1558.355 1959.214 1553.249 1966.346 1560.843 1958.606 C 1564.9 1954.476 1564.83 1955.457 1569.557 1951.405 C 1585.104 1938.034 1605.049 1916.718 1622.746 1908.959 C 1625.094 1903.201 1621.417 1908.88 1626.663 1902.847 C 1626.723 1902.779 1632.208 1897.706 1632.418 1897.559 C 1641.672 1891.007 1636.695 1893.96 1644.909 1891.86 C 1661.786 1863.49 1671.159 1873.84 1685.228 1849.993 L 1122.048 1849.336 C 1122.198 1848.393 1447.77 1344.962 1465.556 1334.985 C 1468.034 1319.535 1473.16 1315.503 1482.184 1301.888 C 1488.359 1292.578 1493.525 1281.424 1503.297 1275.362 C 1522.622 1230.415 1683.6 1010.924 1693.102 980.474 L 1144.761 980.307 C 1145.09 969.3 1315.32 667.183 1325.303 660.855 C 1334.126 634.506 1490.876 368.282 1507.054 340.442 L 1643.12 102.97 C 1653.632 83.458 1680.741 41.689 1686.787 23.335 L 688.089 23.865 L 678.967 40.452 L 678.977 40.462 Z" style="stroke: rgb(0, 17, 71); stroke-width: 0px; stroke-miterlimit: 2; paint-order: fill; fill: rgb(0, 17, 71);" bx:origin="0 0"/>
+</svg>

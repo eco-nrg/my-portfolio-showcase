@@ -1,0 +1,53 @@
+version: "3.8"
+x-django-variables: &django-variables
+  ALLOWED_HOSTS: eco-parking.7bits.it,api.eco-parking.7bits.it
+  SMS_TRANSPORT: stub
+  SENTRY_ENV: staging
+  HOST: https://api.eco-parking.7bits.it/
+  INFLUXDB_MIDDLEWARE_DISABLED: true
+  PAYMENT_ENABLED: true
+  FRONTEND_BASE_URL: https://eco-parking.7bits.it
+x-caddy-variables: &caddy-variables
+  DEBUG_CORS: http://web-23.online
+  WEB_APP_CORS: https://eco-parking.7bits.it
+  WEB_APP_ADDRESS: eco-parking.7bits.it
+  API_ADDRESS: api.eco-parking.7bits.it
+  DOZZLE_ADDRESS: tail.eco-parking.7bits.it
+  FAKE_PI_ADDRESS: pi.eco-parking.7bits.it
+x-logging: &default-logging
+  driver: local
+  options:
+    max-size: 100m
+services:
+  api:
+    environment: *django-variables
+  cron:
+    environment: *django-variables
+  caddy:
+    volumes:
+      - ./Caddyfile-staging:/etc/caddy/Caddyfile
+      - ${SERVER_PATH:-/opt/eco-nrg/server}/static:/var/www/django/static
+      - ${SERVER_PATH:-/opt/eco-nrg/server}/media:/var/www/django/media
+      - ./.docker/caddy-config:/config # configuration autosaves
+      - ./.docker/caddy-data:/data # saving certificates
+    environment: *caddy-variables
+    logging: *default-logging
+  pi:
+    image: eco-parking-fake-pi
+    restart: unless-stopped
+    build:
+      context: ${STATION_PATH:-/home/deploy/eco-parking/station}
+      dockerfile: ${STATION_PATH:-/home/deploy/eco-parking/station}/fake-pi/Dockerfile
+    ports:
+      - 8080:8080
+    environment:
+      REDIS_HOST: redis
+      DEVICE_KEY: a2afd4d159929841ac5f8d8f092fd4045f68e046
+      API_URL: https://api.eco-parking.7bits.it
+      APP_URL: https://eco-parking.7bits.it
+      SENTRY_DSN: https://cc1db637e98b479a9a8067d83604b597@logs.eco-nrg.store/2
+      SENTRY_ENV: fake
+    depends_on:
+      redis:
+        condition: service_healthy
+    logging: *default-logging

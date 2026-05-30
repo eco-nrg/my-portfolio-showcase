@@ -1,0 +1,101 @@
+:root {
+  --orange-rad: #E74610; /* оранжевый основной 231.70.16 #E74610 */
+  --dark-blue: #001147; /* тёмно синий 0.17.71 #001147 */
+  --blue: #00AAFF; /* голубой 1.143.251 был #018FFB стал #00AAFF*/
+  --blue-spacer: #3FA9DF; /* голубой для лого станций 63.169.223 #3FA9DF */
+  --red-light-fon: #E31E24; /* красный для светлого фона 227.30.36 #E31E24 */
+  --red-dark-fon: #FF0000; /* красный для тёмного фона 255.0.0 #FF0000 */
+  --green-light-fon: #008509; /* зелёный для светлого фона 0.133.9 #008509 */
+  --green-dark-fon: #00FF11; /* зелёный для тёмного фона 0.255.17 #00FF11 */
+  --light-grey: #B2B3B3; /* серый светлый 178.179.179 #B2B3B3 */
+  --dark-grey: #727271; /* серый тёмный 114.114.113 #727271 */
+  --white-text: #FFFFFF;/* цвет текста */
+  --black-text: #000000;/* цвет текста */
+  --dark-fon: #0000008c; /* серый светлый с прозрачностью для фона модалки */
+  --dark-fon-scroll: #00000030; /* серый светлый с прозрачностью для скрола */
+  --orange-status: #ffa500;
+  --gray: #575757;
+  --orange: #E84E0F;
+  --drak-green: #328E2E;
+
+  --white-background: #FFFFFF;
+
+  --blue-fon-button: #005fc4; /* голубой для button visited 0.95.196 #005fc4 */
+  --red-fon-button: #910000; /* красный для button visited 145.0.0 #910000 */
+  --green-fon-button: #005906; /* зелёный для button visited 0.89.6 #005906 */
+
+  --conn-AV: #aaf943;
+  --conn-DI: #000000;
+  --conn-CH: #3dabff;
+  --conn-BU: #e1152d;
+  --conn-BO: #f7560a;
+}
+body{
+  // /* background-color: var(--dark-blue);*/
+  overflow-x: hidden;
+  touch-action: pan-y;
+  -ms-touch-action: pan-y;
+}
+.money{
+  position: relative;
+}
+.money::after {
+  content: '\20BD';
+  // top: -4px;
+  position: absolute;
+  font-size: 1.1em;
+  right: -24px;
+}
+
+.DI svg {//Необслуживается
+  fill: var(--conn-DI);
+}
+.AV svg {//Свободно
+  fill: var(--conn-AV);
+}
+.CH svg {//Заряжается
+  fill: var(--conn-CH)
+}
+.BU svg {//Занято
+  fill: var(--conn-BU);
+}
+.BO svg {//Забронированно
+  fill: var(--conn-BO);
+}
+
+
+.DI-back {
+  .DI svg { //Необслуживается
+    fill: var(--white-text);
+  }
+}
+.AV-back {
+  .AV svg { //Свободно
+    fill: var(--white-text);
+  }
+}
+.CH-back {
+  .CH svg { //Заряжается
+    fill: var(--white-text);
+  }
+}
+.BU-back {
+  .BU svg { //Занято
+    fill: var(--white-text);
+  }
+}
+.BO-back {
+  .BO svg {//Забронированно
+    fill: var(--white-text);
+  }
+}
+
+.AV,
+.DI,
+.CH,
+.BU,
+.BO {
+  width: 2em;
+  height: 2em;
+  cursor: pointer;
+}

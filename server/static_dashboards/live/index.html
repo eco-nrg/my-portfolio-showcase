@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cameras preview</title>
+</head>
+<body>
+  <div id="images"></div>
+  <script>
+      const urls = [
+        "https://api.eco-nrg.store/media/camera/refill/1.jpg",
+        "https://api.eco-nrg.store/media/camera/space/3.jpg",
+        "https://api.eco-nrg.store/media/camera/space/1.jpg",
+        "https://api.eco-nrg.store/media/camera/space/2.jpg",
+        "https://api.eco-nrg.store/media/camera/refill/2.jpg",
+        "https://api.eco-nrg.store/media/camera/space/4.jpg",
+      ]
+
+      const imagesBlock = document.getElementById('images');
+
+      const images = urls.map((url) => {
+        const img = new Image();
+        img.dataset['src'] = url;
+        img.src = url + "?t=0";
+
+        imagesBlock.appendChild(img);
+        return img;
+      })
+
+      setInterval(() => {
+        const t = Date.now().toString();
+        images.forEach((img) => {
+          img.src = img.dataset['src'] + "?t=" + t;
+        });
+      }, 1000);
+  </script>
+</body>
+</html>

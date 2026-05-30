@@ -1,0 +1,7 @@
+# Contains by path /.config/lxsession/LXDE-pi/autostart
+#@lxpanel --profile LXDE
+#@pcmanfm --desktop --profile LXDE
+#@xscreensaver -no-splash
+#@pcmanfm --set-wallpaper="/opt/station/ui/img/warning.jpg"
+#@feh --bg-scale /opt/station/ui/img/warning.jpg
+@pcmanfm --set-wallpaper-mode=fit --wallpaper=/opt/station/ui/img/warning.jpg

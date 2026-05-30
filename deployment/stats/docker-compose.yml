@@ -1,0 +1,67 @@
+version: "3.8"
+x-logging:
+  &default-logging
+  driver: local
+  options:
+    max-size: 100m
+services:
+  grafana:
+    image: grafana/grafana:9.5.1
+    restart: always
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: 854ef31523a21f83
+      GF_SERVER_DOMAIN: stats.eco-nrg.store
+      GF_SERVER_HTTP_ADDR: 0.0.0.0
+      GF_SERVER_HTTP_PORT: 3000
+      #GF_SERVER_PROTOCOL: https
+      GF_USERS_ALLOW_SIGN_UP: false
+    ## proxy with caddy
+    # ports:
+    #   - 3000:3000
+    links:
+      - influxdb
+    depends_on:
+      - influxdb
+    volumes:
+      - grafana:/var/lib/grafana
+    user: '472'
+    logging: *default-logging
+  influxdb:
+    image: influxdb:2.7-alpine
+    ## proxy with caddy
+    # ports:
+    #   - 8086:8086
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: 559badb19784dfa2
+      DOCKER_INFLUXDB_INIT_ORG: eco-nrg
+      DOCKER_INFLUXDB_INIT_BUCKET: rasp-pi
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: l0EO9_kC5ou7muoBwFzdhjGWisQQDBgOJ6b89u4_nb13OrinqPF8GZAqgD-ZT0wu7GP9LnyKVf-GgfdVKXrvBg==
+    volumes:
+      - influxdb:/var/lib/influxdb
+      - influxdb2:/var/lib/influxdb2
+    logging: *default-logging
+  caddy:
+    image: caddy:2.6-alpine
+    restart: unless-stopped
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/config  # configuration autosaves
+      - caddy_config:/data  # saving certificates
+    ports:
+      - "8086:8086"
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMAIN_NAME: stats.eco-nrg.store
+    logging: *default-logging
+
+volumes:
+  caddy_config:
+  caddy_data:
+  influxdb:
+  influxdb2:
+  grafana:

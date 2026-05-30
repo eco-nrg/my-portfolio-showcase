@@ -1,0 +1,5 @@
+API_WSS = "wss://charge.demoloqr.ru/ws/socket-server/"
+API_SERVER_NAME = "charge.eco-nrg.store"
+API_SERVER = 
+API_MAP_KEY =
+REPORT_PROBLEM_URL = "https://wa.me/79882463355"

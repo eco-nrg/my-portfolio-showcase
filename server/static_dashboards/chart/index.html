@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chart example</title>
+</head>
+
+<body>
+  <div id="charts"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/chart.umd.min.js"
+    integrity="sha512-TJ7U6JRJx5IpyvvO9atNnBzwJIoZDaQnQhb0Wmw32Rj5BQHAmJG16WzaJbDns2Wk5VG6gMt4MytZApZG47rCdg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+    function draw_all_charts(token) {
+      const chrts = document.getElementById('charts');
+
+      const socket = new WebSocket("wss://api.eco-nrg.store/ws/socket-server/");
+      socket.addEventListener("open", (event) => {
+        const init_msg = { type: "init", data: { token: token } }
+        socket.send(JSON.stringify(init_msg));
+      });
+      socket.addEventListener("message", (event) => {
+        const data = JSON.parse(event.data);
+        console.log(data.type);
+        if (data.type === 'error_response') {
+          console.error(data.data.message)
+        } else if (data.type === 'sessions_history_response') {
+          const sessions = data.data;
+          if (sessions.length === 0) {
+            return;
+          }
+
+          for (const session of sessions) {
+            const order_uuid = session.uuid;
+            const chart_msg = { type: "session_chart", data: { order_uuid: order_uuid } }
+            socket.send(JSON.stringify(chart_msg));
+          }
+
+        } else if (data.type === 'session_chart_response') {
+          const ctx = document.createElement('canvas');
+          chrts.appendChild(ctx);
+          const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: data.data.labels,
+              datasets: [{
+                label: `Current A: ${data.data.order_uuid}`,
+                data: data.data.current_a,
+                fill: true,
+              }],
+            },
+            options: {
+              elements: {
+                point: {
+                  pointStyle: false,
+                }
+              }
+            }
+          });
+        }
+      });
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const user_token = params.get('token')
+    if (!user_token) {
+      console.warn('User token is not set. Must be ?token=TOKEN')
+    }
+    draw_all_charts(user_token);
+
+
+  </script>
+</body>
+
+</html>

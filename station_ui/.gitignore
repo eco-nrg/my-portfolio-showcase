@@ -1,0 +1,7 @@
+node_modules
+dist
+nust-dist
+.env
+
+# код будет генерироваться, он не нужен в репозитории
+qr-code.jpg

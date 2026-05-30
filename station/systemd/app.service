@@ -1,0 +1,16 @@
+[Unit]
+Description=Station root application
+After=network.target
+
+[Service]
+WorkingDirectory=/home/raspi/python/station
+
+# The dummy program will exit
+Type=oneshot
+# Execute a dummy program
+ExecStart=/bin/true
+# This service shall be considered active after start
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
